@@ -1,0 +1,38 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Run static code analysis with SonarQube
+        uses: sonarsource/sonarqube-scan-action@v1.2
+        with:
+          sonar-project-key: <SONAR_PROJECT_KEY>
+          sonar-host-url: <SONAR_SERVER_URL>
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
