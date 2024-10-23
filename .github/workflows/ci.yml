@@ -24,12 +24,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1  # Ersetze dies durch deine Region
+          aws-region: ${{ secrets.AWS_REGION }}
 
       # Log in to Amazon ECR
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       # Build the Docker image
       - name: Build the Docker image
@@ -39,22 +39,22 @@ jobs:
       # Tag the Docker image with the ECR repository URL
       - name: Tag the Docker image
         run: |
-          docker tag myapp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com/myapp:latest
+          docker tag myapp:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/myapp:latest
 
       # Push the Docker image to Amazon ECR
       - name: Push the Docker image to ECR
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com/myapp:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/myapp:latest
 
   deploy:
     needs: build  # Der Deploy-Job läuft nur, wenn der Build-Job erfolgreich war
     runs-on: ubuntu-latest
 
     steps:
-      # Check AWS CLI configuration
+      # Check AWS CLI configuration with debug
       - name: Check AWS CLI configuration
         run: |
-          aws sts get-caller-identity
+          aws sts get-caller-identity --debug
 
       # Deploy the image to Amazon ECS
       - name: Deploy to Amazon ECS
