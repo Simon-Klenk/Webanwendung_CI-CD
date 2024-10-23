@@ -51,7 +51,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Check AWS CLI configuration
+      - name: Check AWS CLI configuration
+        run: |
+          aws sts get-caller-identity
+
       # Deploy the image to Amazon ECS
       - name: Deploy to Amazon ECS
         run: |
-          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment --region eu-north-1
+          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment --region ${{ secrets.AWS_REGION }}
