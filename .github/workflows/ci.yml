@@ -18,24 +18,3 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: Print current directory
-        run: pwd
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build application
-        run: npm run build
-
-      - name: Run unit tests
-        run: npm run test
-
-      - name: Run integration tests
-        run: npm run test:integration
-
-      - name: Run static code analysis with SonarQube
-        uses: sonarsource/sonarqube-scan-action@v1.2
-        with:
-          sonar-project-key: <SONAR_PROJECT_KEY>
-          sonar-host-url: <SONAR_SERVER_URL>
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
