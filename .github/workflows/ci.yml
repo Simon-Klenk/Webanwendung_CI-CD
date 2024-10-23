@@ -1,9 +1,9 @@
-name: CI Pipeline
+name: Build and Deploy to AWS
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - main  # Trigger den Workflow, wenn ein Push auf den "main"-Branch erfolgt
 
 jobs:
   build:
@@ -21,6 +21,7 @@ jobs:
       # Configure AWS CLI with credentials
       - name: Configure AWS CLI
         run: |
+          mkdir -p ~/.aws  # Erstelle das .aws Verzeichnis, falls es nicht existiert
           echo "[default]" > ~/.aws/config
           echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
           echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
